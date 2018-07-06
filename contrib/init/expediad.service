@@ -1,0 +1,26 @@
+[Unit]
+Description=Expedia's distributed currency daemon
+After=network.target
+
+[Service]
+User=expedia
+Group=expedia
+
+Type=forking
+PIDFile=/var/lib/expediad/expediad.pid
+
+ExecStart=/usr/bin/expediad -daemon -pid=/var/lib/expediad/expediad.pid \
+          -conf=/etc/expedia/expedia.conf -datadir=/var/lib/expediad
+
+ExecStop=-/usr/bin/expedia-cli -conf=/etc/expedia/expedia.conf \
+         -datadir=/var/lib/expediad stop
+
+Restart=always
+PrivateTmp=true
+TimeoutStopSec=60s
+TimeoutStartSec=2s
+StartLimitInterval=120s
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target
